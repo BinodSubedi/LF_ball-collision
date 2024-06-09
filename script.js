@@ -1,8 +1,6 @@
 const ball = document.querySelector('.ball');
 
 document.body.style.overflow = 'hidden'
-// document.body.style.padding = '5rem'
-// document.body.style.padding = '8rem'
 
 
 let ball_ledger = {}
@@ -54,17 +52,16 @@ for(let i = 0; i<500; i++){
     // 10 balls demo with variable momentum option
 
 
-    // if (i < 9) {
+    // if (i < 5) {
 
-    //     const checkball = new Ball({ height: 80, width: 80, x: 100+ i*80, y: 100 + 80 *i, id: i,dy: 13, dx: 10, x_direction: 1, y_direction:1 })
+    //     const checkball = new Ball({ height: 30, width: 30, x: 100+ i*80, y: 100 + 80 *i, id: i,dy: 13, dx: 10, x_direction: 1, y_direction:1 })
     //     checkball.create()
 
     // }else{
 
-    //     const checkball = new Ball({ height: 80, width: 80, x: 100+ i*50, y: 100 + 50 *i, id: i,dy: 13, dx: 10, x_direction: 1, y_direction:1 })
+    //     const checkball = new Ball({ height: 30, width: 30, x: 100+ i*50, y: 100 + 50 *i, id: i,dy: 13, dx: 10, x_direction: 1, y_direction:1 })
 
     //     checkball.create()
-
 
 
     // }
@@ -100,21 +97,6 @@ setInterval(()=>{
 
     Object.values(ball_ledger).forEach((v) => {
 
-        //for x-axis
-        if(v.x >= (window.innerWidth - 50) || v.x <= 50){
-
-            v.x_direction = v.x_direction * -1;
-
-            // v.dx *= -1;
-        }
-
-        //for y-axis
-        if (v.y >= (window.innerHeight - 80) || v.y <= 80) {
-            v.y_direction = v.y_direction * -1;
-
-            // v.dy *= -1
-        }
-
 
         // Inserting distance with reference to the starting of the screen [at the left top-most corner]
 
@@ -127,19 +109,21 @@ setInterval(()=>{
 
             // checking for collison with other elements
 
-            const maxElementDistance = Math.sqrt((v.height) ** 2 + (v.width) ** 2);
+            const maxElementDistance = Math.sqrt((v.height/2) ** 2 + (v.width/2) ** 2);
 
-            const positive_offset = (distance + maxElementDistance) > 100 ? 100 : Math.floor(distance + maxElementDistance);
-            const negative_offset = (distance - maxElementDistance) < 0 ? 0 : Math.floor(distance - maxElementDistance);
-
-
-            for(let i = Math.min(negative_offset, positive_offset); i <= Math.max(negative_offset,positive_offset); i++){
+            for(let i = Math.floor(distance-maxElementDistance); i <= Math.floor(distance + maxElementDistance); i++){
 
 
                 if (ballStrikeCombination[distance_ledger[i]] == v.id){
                     console.log('already striked!!')
                     break;
                 }
+
+                // console.log('near enough');
+
+                // console.log(distance_ledger)
+                // console.log(i)
+                // console.log(distance_ledger[i])
                 
                 if (distance_ledger[i] !== undefined){
 
@@ -147,36 +131,13 @@ setInterval(()=>{
                     const collided_ball = ball_ledger[distance_ledger[i]]; 
 
 
+
                     //checking by commenting
-                    if ( Math.sqrt((collided_ball.x - v.x)**2 + (collided_ball.y - v.y)**2) <= maxElementDistance+3){
-                    //    if(Math.abs(collided_ball.x - v.x) <= v.width && Math.abs(collided_ball.y - v.y) <= v.height){
-
-                        // console.log('collision')
-
-                        //    console.log(ballStrikeCombination);
-                        //    console.log(v.id);
-                        //    console.log(distance_ledger[i])
+                    if ( Math.sqrt((collided_ball.x - v.x)**2 + (collided_ball.y - v.y)**2) < (v.width/2 + collided_ball.width/2)){
 
 
                         const x_difference = Math.sqrt(((collided_ball.x - collided_ball.width) - (v.x - v.width)) ** 2)
                         const y_difference = Math.sqrt(((collided_ball.y - collided_ball.height) - (v.y - v.height)) ** 2)
-
-                        // if(x_difference < y_difference){
-
-
-
-                        //     // v.x_direction *= -1;
-                        //     // ball_ledger[distance_ledger[i]].x_direction *= -1
-
-                        //     console.log('x-hit')
-
-                        // } else {
-
-                        //     // v.y_direction *= -1;
-                        //     // ball_ledger[distance_ledger[i]].y_direction *= -1
-                        //     console.log('y-hit')
-
-                        // }
 
 
 
@@ -191,17 +152,18 @@ setInterval(()=>{
                         const m2v2y = collided_ball.massAreaUnit * collided_ball.dy; 
 
                         let yMomentumDiff;
-                        let y1Big = true;
+                        let y1Big = {'bigger':null};
                         let xMomentumDiff;
-                        let x1Big = true;
+                        let x1Big = {'bigger':null};
 
                         if(m1v1x > m2v2x){
-
                             xMomentumDiff = m1v1x - m2v2x;                            
+                            x1Big['bigger'] = true;
 
-                        }else{
+                        }else if (m1v1x < m2v2x){
+
                             xMomentumDiff = m2v2x - m1v1x
-                            x1Big = false;
+                            x1Big['bigger'] = false;
                         }
 
                         // console.log(xMomentumDiff)
@@ -210,58 +172,105 @@ setInterval(()=>{
 
                         if(m1v1y > m2v2y){
                             yMomentumDiff = m1v1y - m2v2y;
-                        }else{
+                            y1Big['bigger'] = true;
+
+                        }else if (m2v2y < m1v1y){
                             yMomentumDiff = m2v2y - m1v1y;
-                            y1Big = false;
+                            y1Big['bigger'] = false;
                         }
 
 
                         // console.log('ymomentumDiff::', yMomentumDiff);
 
+                        // Using relative changes to determine direction change
+
+                        const collisionRelativeDifference = {x: Math.abs(v.x - collided_ball.x), y: Math.abs(v.y - collided_ball.y)}
+
                         // Changing dx and dy respectively
 
                         //For dx first
 
-                        if(x1Big){
+                        if(x1Big['bigger'] == true){
 
                             v.dx -= (xMomentumDiff / (2 * v.massAreaUnit));
                             ball_ledger[distance_ledger[i]].dx += (xMomentumDiff / (2 * collided_ball.massAreaUnit));
-                            // ball_ledger[distance_ledger[i]].x_direction *= -1;
+
+                            if(collisionRelativeDifference.x > collisionRelativeDifference.y){
+
+                            v.x_direction *= -1;
+                            ball_ledger[distance_ledger[i]].x_direction *= -1;
+
+                            }
 
 
-                        }else if (!x1Big){
+                            console.log('x1 big')
+
+
+                        }else if (x1Big['bigger'] === false){
 
                             v.dx += (xMomentumDiff / (2 * v.massAreaUnit));
                             ball_ledger[distance_ledger[i]].dx -= (xMomentumDiff / (2 * collided_ball.massAreaUnit));
-                            // v.x_direction *= -1;
+
+                            if(collisionRelativeDifference.x > collisionRelativeDifference.y){
+
+                            v.x_direction *= -1;
+                             ball_ledger[distance_ledger[i]].x_direction *= -1; 
+
+                            }
+
+                            console.log('x1 not big')
 
                         }
 
 
                         //For dy second
 
-                        if(y1Big){
+                        if(y1Big['bigger'] == true){
 
                             v.dy -= (yMomentumDiff / (2 * v.massAreaUnit));
                             ball_ledger[distance_ledger[i]].dy += (yMomentumDiff / (2 * collided_ball.massAreaUnit));
-                            ball_ledger[distance_ledger[i]].y_direction *= -1;
 
-                        }else if (!y1Big){
+                            if(collisionRelativeDifference.y > collisionRelativeDifference.x){
+
+                            ball_ledger[distance_ledger[i]].y_direction *= -1;
+                            v.y_direction *= -1;
+
+                            }
+
+
+                        }else if (y1Big['bigger'] === false){
 
                             v.dy += (yMomentumDiff / (2 * v.massAreaUnit));
                             ball_ledger[distance_ledger[i]].dy -= (yMomentumDiff / (2 * collided_ball.massAreaUnit));
-                            v.y_direction *= -1;
+
+                            if(collisionRelativeDifference.y > collisionRelativeDifference.x){
+
+                                v.y_direction *= -1;
+                                ball_ledger[distance_ledger[i]].y_direction *= -1;
+
+                            }
+
 
                         }
 
-                        if(xMomentumDiff == 0){
+                        if (x1Big['bigger'] == null || y1Big['bigger'] == null){
+
+                            if(collisionRelativeDifference.x > collisionRelativeDifference.y){
+
                             v.x_direction *= -1;
                             ball_ledger[distance_ledger[i]].x_direction *= -1;
-                        }
-                        else if(yMomentumDiff == 0){
+
+                            }else{
+
                             v.y_direction *= -1;
                             ball_ledger[distance_ledger[i]].y_direction *= -1;
+
+
+                            }
+
+
                         }
+
 
 
                         ballStrikeCombination[distance_ledger[i]] = v.id;
@@ -276,6 +285,22 @@ setInterval(()=>{
 
 
         }
+
+
+        if (v.x >= (window.innerWidth - (v.width + 50)) || v.x <= (v.width+50)) {
+
+            v.x_direction = v.x_direction * -1;
+
+            // v.dx *= -1;
+        }
+
+        //for y-axis
+        if (v.y >= (window.innerHeight - (v.height + 50)) || v.y <= v.height) {
+            v.y_direction = v.y_direction * -1;
+
+            // v.dy *= -1
+        }
+
 
 
 
