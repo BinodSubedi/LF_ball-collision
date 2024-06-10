@@ -80,14 +80,14 @@ for(let i = 0; i<500; i++){
 
     if (i < 3) {
 
-        const checkball = new Ball({ height: 15, width: 15, x: 100, y: 100, id: i, dy: 12, dx: 12, x_direction: 1, y_direction: 1 })
+        const checkball = new Ball({ height: 15, width: 15, x: 100, y: 100, id: i, dy: 5, dx: 5, x_direction: 1, y_direction: 1 })
 
         checkball.create()
 
     }
     else {
 
-        const checkball = new Ball({ height: 8, width: 8, x: 8 + i * 2, y: 8 + 2 * i, id: i, dy: 13, dx: 10, x_direction: 1, y_direction: 1 })
+        const checkball = new Ball({ height: 8, width: 8, x: 8 + i * 2, y: 8 + 2 * i, id: i, dy: 5, dx: 5, x_direction: 1, y_direction: 1 })
         checkball.create()
 
     }
