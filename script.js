@@ -26,7 +26,16 @@ class Ball{
 
 
     create(){
+
+        //randomizing color for background
+        const red = Math.floor(Math.random() * 255);
+        const green = Math.floor(Math.random() * 255);
+        const blue = Math.floor(Math.random() * 255);
+
+        // console.log(red,green,blue)
+
         const element = document.createElement('div');
+
 
         element.style.height = `${this.height}px`
         element.style.width = `${this.width}px`
@@ -37,6 +46,7 @@ class Ball{
         // element.style.zIndex = 1;
         // element.style.margin = '0.3rem'
         element.style.borderRadius = '50%'
+        element.style.background =  `rgb(${red}, ${green}, ${blue})`
 
         document.body.appendChild(element);
         this.element = element
@@ -291,12 +301,24 @@ setInterval(()=>{
 
             v.x_direction = v.x_direction * -1;
 
+            if (v.x >= (window.innerWidth) - (v.width + 50)){
+                v.x = window.innerWidth - (v.width + 50)
+            }else if(v.x <= (v.width+50)){
+                v.x = v.width+50
+            }
+
             // v.dx *= -1;
         }
 
         //for y-axis
-        if (v.y >= (window.innerHeight - (v.height + 50)) || v.y <= v.height) {
+        if (v.y >= (window.innerHeight - (v.height + 50)) || v.y <= (v.height+50)) {
             v.y_direction = v.y_direction * -1;
+
+            if (v.y >= (window.innerHeight) - (v.height + 50)) {
+                v.y = window.innerHeight - (v.height + 50)
+            } else if (v.y <= v.height + 50) {
+                v.y = v.height + 50
+            }
 
             // v.dy *= -1
         }
